@@ -44,7 +44,7 @@ denseNet201Model = DenseNet201(weights='imagenet')
 
 # Import image and preprocess it
 
-img_path = '/content/chips.jpeg'
+img_path = 'content/chips.jpeg'
 
 img224_224 = image.load_img(img_path, target_size=(224, 224))
 
