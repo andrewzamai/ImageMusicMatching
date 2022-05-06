@@ -1,6 +1,7 @@
 from ImageFeaturesVector import ImageFeaturesVector
 from MusicFeaturesVector import MusicFeaturesVector
 
+
 import pandas as pd
 import numpy as np
 import csv
@@ -27,6 +28,10 @@ now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 print("Validation conversion started at: ", current_time)
 
+musicFeaturesDict = {} #already computed feature vectors
+imageFeaturesDict = {} #already computed image feature vectors
+
+
 with open(pathTo_Valid_MatchingTxt, 'r') as validFile:
 
     with open(pathToFeaturesCSVFolder + '/validCSV.csv', 'w', newline='\n') as validFileCSV:
@@ -41,11 +46,20 @@ with open(pathTo_Valid_MatchingTxt, 'r') as validFile:
                 # musicID contains a value [2, 2058] without csv extension; imageID is without .jpg extension; score is a value [0,1]\n
 
                 # take imageID and compute features vector using ImageFeaturesVector
-                imgFeatVec = imageFeaturesVector.createImageFeaturesVector(imagesAllPath + '/' + imageID + '.jpg')
-
+                if np.any(imageFeaturesDict.get(imageID)):
+                    imgFeatVec = imageFeaturesDict.get(imageID)
+                else:  
+                    imgFeatVec = imageFeaturesVector.createImageFeaturesVector(imagesAllPath + '/' + imageID + '.jpg')
+                    imageFeaturesDict[imageID] = imgFeatVec
+                
                 # concatenate with music feature vector
-                musicFeatVec = musicFeaturesVector.getMusicFeaturesVector(musicID + '.mp3').reshape((1, 512))
-
+                if np.any(musicFeaturesDict.get(musicID)):
+                    musicFeatVec = musicFeaturesDict.get(musicID)
+                else:
+                    musicFeatVec = musicFeaturesVector.getMusicFeaturesVector(musicID + '.mp3').reshape((1, 512))
+                    musicFeaturesDict[musicID] = musicFeatVec
+                
+        
                 imgMusFeatVec = np.hstack((imgFeatVec, musicFeatVec))
 
                 # concatenate with score value
@@ -76,10 +90,18 @@ with open(pathTo_Test_MatchingTxt, 'r') as testFile:
                 # musicID contains a value [2, 2058] without csv extension; imageID is without .jpg extension; score is a value [0,1]\n
 
                 # take imageID and compute features vector using ImageFeaturesVector
-                imgFeatVec = imageFeaturesVector.createImageFeaturesVector(imagesAllPath + '/' + imageID + '.jpg')
-
+                if np.any(imageFeaturesDict.get(imageID)):
+                    imgFeatVec = imageFeaturesDict.get(imageID)
+                else:  
+                    imgFeatVec = imageFeaturesVector.createImageFeaturesVector(imagesAllPath + '/' + imageID + '.jpg')
+                    imageFeaturesDict[imageID] = imgFeatVec
+                
                 # concatenate with music feature vector
-                musicFeatVec = musicFeaturesVector.getMusicFeaturesVector(musicID + '.mp3').reshape((1, 512))
+                if np.any(musicFeaturesDict.get(musicID)):
+                    musicFeatVec = musicFeaturesDict.get(musicID)
+                else:
+                    musicFeatVec = musicFeaturesVector.getMusicFeaturesVector(musicID + '.mp3').reshape((1, 512))
+                    musicFeaturesDict[musicID] = musicFeatVec
 
                 imgMusFeatVec = np.hstack((imgFeatVec, musicFeatVec))
 
@@ -109,11 +131,19 @@ with open(pathTo_Train_MatchingTxt, 'r') as trainFile:
                 # musicID contains a value [2, 2058] without csv extension; imageID is without .jpg extension; score is a value [0,1]\n
 
                 # take imageID and compute features vector using ImageFeaturesVector
-                imgFeatVec = imageFeaturesVector.createImageFeaturesVector(imagesAllPath + '/' + imageID + '.jpg')
-
+                if np.any(imageFeaturesDict.get(imageID)):
+                    imgFeatVec = imageFeaturesDict.get(imageID)
+                else:  
+                    imgFeatVec = imageFeaturesVector.createImageFeaturesVector(imagesAllPath + '/' + imageID + '.jpg')
+                    imageFeaturesDict[imageID] = imgFeatVec
+                
                 # concatenate with music feature vector
-                musicFeatVec = musicFeaturesVector.getMusicFeaturesVector(musicID + '.mp3').reshape((1, 512))
-
+                if np.any(musicFeaturesDict.get(musicID)):
+                    musicFeatVec = musicFeaturesDict.get(musicID)
+                else:
+                    musicFeatVec = musicFeaturesVector.getMusicFeaturesVector(musicID + '.mp3').reshape((1, 512))
+                    musicFeaturesDict[musicID] = musicFeatVec
+                    
                 imgMusFeatVec = np.hstack((imgFeatVec, musicFeatVec))
 
                 # concatenate with score value
@@ -127,4 +157,5 @@ print("Train done")
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")
 print("Train conversion ended at: ", current_time)                          
+
 

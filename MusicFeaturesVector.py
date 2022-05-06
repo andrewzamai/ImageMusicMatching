@@ -26,7 +26,7 @@ class MusicFeaturesVector:
 
     def getMusicFeaturesVector(self, fileMp3Name):
 
-        self.convertFromMp3ToWav(fileMp3Name)
+        #self.convertFromMp3ToWav(fileMp3Name)
 
         (rate, sig) = wav.read(self.pathToWavFolder + '/' + fileMp3Name[:-4] + '.wav')
         mfcc_feat = mfcc(sig, rate)
@@ -35,9 +35,44 @@ class MusicFeaturesVector:
         reshaped_mfcc = np.reshape(mfcc_feat[index : index+40, :], (1, 520))[0, :512]
 
         #delete wav file
+        #os.remove(self.pathToWavFolder + '/' + fileMp3Name[:-4] + '.wav')
+
+        return reshaped_mfcc
+
+
+    def getMusicFeaturesVector4MyMusic(self, fileMp3Name):
+
+        self.convertFromMp3ToWav(fileMp3Name)
+
+        (rate, sig) = wav.read(self.pathToWavFolder + '/' + fileMp3Name[:-4] + '.wav')
+        mfcc_feat = mfcc(sig, rate)
+        # take only 40 casual frames features 
+        index = int(random.uniform(2000, mfcc_feat.shape[0]-1000))
+        reshaped_mfcc = np.reshape(mfcc_feat[index : index+40, :], (1, 520))[0, :512]
+
+        #delete wav file
         os.remove(self.pathToWavFolder + '/' + fileMp3Name[:-4] + '.wav')
 
         return reshaped_mfcc
+
+
+'''
+existingMp3Files = []
+musicFeaturesVector = MusicFeaturesVector('/Users/andrew/Projects/ImageMusicMatching/MusicDEAMdataset/DEAM_audio/MEMD_audio')
+
+for file in os.listdir(musicFeaturesVector.pathToMp3Folder):
+    if os.path.exists(musicFeaturesVector.pathToMp3Folder + '/' + file):
+        musicFeaturesVector.convertFromMp3ToWav(file)
+        existingMp3Files.append(file[:-4])
+
+missingFilesList = open('/Users/andrew/Projects/ImageMusicMatching/MusicDEAMdataset/DEAM_audio/missingMp3Files.txt', 'w')
+for i in range(2049):
+    if i not in existingMp3Files:
+        missingFilesList.write(str(i) + ',')
+'''
+        
+    
+    
 
 
 
